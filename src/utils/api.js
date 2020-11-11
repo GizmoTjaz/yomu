@@ -17,7 +17,7 @@ export function getManga (id) {
     return new Promise((res, rej) => {
 
         const
-            mangaEndpoint = `${ENDPOINTS.MANGADEX_ENDPOINT}/manga/${encodeURIComponent(id)}`,
+            mangaEndpoint = `${ENDPOINTS.MANGADEX}/manga/${encodeURIComponent(id)}`,
             rawManga = {};
 
         axios.get(mangaEndpoint).then(({ data }) => {
@@ -48,7 +48,7 @@ export function getManga (id) {
  */
 export function getChapter (id) {
     return new Promise((res, rej) => {
-        axios.get(`${ENDPOINTS.MANGADEX_ENDPOINT}/chapter/${encodeURIComponent(id)}`).then(({ data }) => {
+        axios.get(`${ENDPOINTS.MANGADEX}/chapter/${encodeURIComponent(id)}`).then(({ data }) => {
             const { data: rawChapter } = data;
             res(constructChapter(rawChapter));
         }).catch(err => {
