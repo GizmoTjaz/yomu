@@ -76,7 +76,6 @@ export default function constructManga (rawManga) {
         });
 
         rawManga.chapters.forEach(chapter => {
-            console.log(chapter.language)
             if (chapter.language === "gb") {
 
                 const chapterNumber = Number(chapter.chapter);

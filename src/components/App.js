@@ -1,7 +1,7 @@
 // Modules
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { registerRootComponent, AppLoading } from "expo";
-import { useFonts } from "@use-expo/font";
+import { useFonts } from "expo-font";
 
 // Components
 import { Fragment } from "react";
@@ -13,8 +13,6 @@ import Reader from "./Reader";
 
 // Styles
 import styles from "../styles/App";
-
-import { getManga } from "../utils/api";
 
 registerRootComponent(function App () {
 
@@ -29,14 +27,6 @@ registerRootComponent(function App () {
         "SF-Compact-Text-Light": require("../../assets/fonts/SF-Compact-Text-Light.otf"),
         "SF-Compact-Text-Bold": require("../../assets/fonts/SF-Compact-Text-Bold.otf")
     });
-
-    /*React.useEffect(() => {
-
-        getManga(22151).then(manga => {
-            setReaderData({ manga, chapterIndex: 45 });
-        });
-
-    }, []);*/
 
     if (areFontsLoaded) {
         return (
@@ -64,6 +54,6 @@ registerRootComponent(function App () {
     } else {
         return (
             <AppLoading />
-        );
+        )
     }
 });
