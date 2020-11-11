@@ -76,6 +76,7 @@ export default function constructManga (rawManga) {
         });
 
         rawManga.chapters.forEach(chapter => {
+            console.log(chapter.language)
             if (chapter.language === "gb") {
 
                 const chapterNumber = Number(chapter.chapter);
@@ -113,48 +114,6 @@ export default function constructManga (rawManga) {
         // Fix NaN chapterCount & volumeCount
         if (isNaN(manga.chapterCount)) manga.chapterCount = manga.chapters.filter(({ chapter }) => Number.isInteger(chapter)).length;
         if (isNaN(manga.volumeCount)) manga.volumeCount = Object.keys(manga.volumes).length;
-
-        /*
-        const filteredChapters = rawManga.chapters.filter(chapter => {
-            return chapter.language === "gb";
-        });
-
-        // Create husk chapters with only metadata
-        filteredChapters.forEach(([ chapterId, chapterData ], index) => {
-
-            const chapterNumber = Number(chapterData.chapter);
-
-            if (manga.chapters.every(({ chapter }) => chapter !== chapterNumber)) {
-
-                manga.chapters.push({
-                    index: manga.chapters.length,
-                    id: Number(chapterId),
-                    title: chapterData.title || "No Title",
-                    chapter: chapterNumber,
-                    volume: Number(chapterData.volume) || null
-                });
-
-                // Separately counted to prevent .5 chapters from increasing the chapter count
-                if (Number.isInteger(chapterNumber)) {
-                    manga.chapterCount += 1;
-                }
-    
-                if (chapterData.volume) {
-    
-                    if (!manga.volumes.hasOwnProperty(chapterData.volume)) {
-                        manga.volumes[chapterData.volume] = [];
-                    }
-    
-                    manga.volumes[chapterData.volume].push(parseInt(chapterData.chapter));
-                }
-
-            }
-        });
-
-        manga.chapters.sort(({ chapter: chapter1 }, { chapter: chapter2 }) => chapter1 - chapter2);
-
-        manga.volumeCount = Object.keys(manga.volumes).length;
-        */
 
     }
 
