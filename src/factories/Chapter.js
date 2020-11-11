@@ -32,7 +32,6 @@ export default function constructChapter (rawChapter) {
 
     // Create Chapter object if rawChapter is provided
     if (typeof rawChapter === "object") {
-
         Object.assign(chapter, {
             id: rawChapter.id,
             title: rawChapter.title || "No Title",
@@ -42,21 +41,6 @@ export default function constructChapter (rawChapter) {
                 return encodeURI(`${rawChapter.server}${rawChapter.hash}/${page}`);
             })
         });
-
-        /*
-            chapter.id = parseInt(rawChapter.id);
-            chapter.title = rawChapter.title ? rawChapter.title : "No Title";
-            chapter.chapter = parseInt(rawChapter.chapter);
-            chapter.volume = parseInt(rawChapter.volume);
-            chapter.pages = rawChapter.page_array.map(page => {
-                return encodeURI(`${rawChapter.server}${rawChapter.hash}/${page}`);
-            });
-
-            if (isNaN(chapter.volume)) {
-                chapter.volume = null;
-            }
-        */
-
     }
 
     return chapter;
