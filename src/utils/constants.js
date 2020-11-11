@@ -8,5 +8,8 @@ module.exports = {
     },
     DEFAULT_VALUES: {
         favoriteManga: []
+    },
+    ENDPOINTS: {
+        MANGADEX: "https://www.mangadex.org/api/v2"
     }
 };
