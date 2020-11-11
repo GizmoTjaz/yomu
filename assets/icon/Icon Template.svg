@@ -1,0 +1,8 @@
+<svg id="Icon_Template" data-name="Icon Template" xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <g id="Template">
+    <rect id="BG" width="512" height="512" fill="#16151d"/>
+    <rect id="Rectangle_1" data-name="Rectangle 1" width="316" height="316" rx="40" transform="translate(256 33.055) rotate(45)" fill="#292635"/>
+    <text id="ム" transform="translate(295 398.5)" fill="#fff" font-size="259" font-family="YuMincho-Demibold, Yu Mincho" font-weight="300"><tspan x="-129.5" y="0">ム</tspan></text>
+    <text id="ヨ" transform="translate(217 288.5)" fill="#fff" font-size="259" font-family="YuMincho-Demibold, Yu Mincho" font-weight="300"><tspan x="-129.5" y="0">ヨ</tspan></text>
+  </g>
+</svg>
