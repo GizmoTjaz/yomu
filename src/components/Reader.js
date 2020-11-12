@@ -66,8 +66,6 @@ function Reader ({ data: { manga, chapterIndex }, onClose, changeReaderSetting, 
         }
     }
 
-    // console.log(readerSettings.readingDirection);
-
     return (
         <Modal
             animationType = "slide"
