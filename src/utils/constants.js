@@ -6,10 +6,10 @@ module.exports = {
         overlayBackground: "#292635",
         overlayBoxBackground: "#22212D"
     },
-    DEFAULT_VALUES: {
-        favoriteManga: []
-    },
     ENDPOINTS: {
         MANGADEX: "https://www.mangadex.org/api/v2"
+    },
+    DEFAULT_DATA: {
+        favoriteManga: {}
     }
 };
