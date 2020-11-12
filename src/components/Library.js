@@ -1,6 +1,7 @@
 // Modules
 import React from "react";
 import { Dimensions } from "react-native";
+import { connect } from "react-redux";
 
 // Components
 import { FlatList, SafeAreaView, Text, TouchableOpacity, Image, View } from "react-native";
@@ -9,19 +10,13 @@ import { FlatList, SafeAreaView, Text, TouchableOpacity, Image, View } from "rea
 import coreStyles from "../styles/Core";
 import styles from "../styles/Library";
 
-// Contexts
-import FavoriteManga from "../stores/FavoriteManga";
-
-export default function Library ({ onMangaPress }) {
-
-  const favorites = FavoriteManga(state => state.favorites);
-
+function Library ({ onMangaPress, favoriteManga }) {
   return (
       <SafeAreaView>
         <Text style = { coreStyles.titleText }>Library</Text>
         <View style = { styles.mangaListContainer }>
           <FlatList
-              data = { Object.values(favorites) }
+              data = { Object.values(favoriteManga) }
               keyExtractor = { manga => manga.id }
               numColumns = { Math.floor((Dimensions.get("window").width - (24 * 2)) / (97 + 9)) }
               renderItem = { ({ item: manga }) => (
@@ -41,3 +36,5 @@ export default function Library ({ onMangaPress }) {
       </SafeAreaView>
   );  
 };
+
+export default connect(({ favoriteManga }) => ({ favoriteManga }))(Library);
