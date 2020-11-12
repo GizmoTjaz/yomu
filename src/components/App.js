@@ -13,12 +13,13 @@ import Reader from "./Reader";
 
 // Styles
 import styles from "../styles/App";
+import { getManga } from "../utils/api";
 
 registerRootComponent(function App () {
 
     const
-        [ previewWindowManga, setPreviewWindowManga ] = useState(0),
-        [ readerData, setReaderData ] = useState({ manga: null, chapterIndex: 0 });
+        [ previewWindowMangaID, setPreviewWindowMangaID ] = useState(0),
+        [ readerData, setReaderData ] = useState({});
 
     const [ areFontsLoaded ] = useFonts({
         "SF-Pro-Display-Bold": require("../../assets/fonts/SF-Pro-Display-Bold.otf"),
@@ -34,15 +35,15 @@ registerRootComponent(function App () {
                 <StatusBar style = "light" />
                 <SafeAreaView style = {{ flex: 0, ...styles.background }} />
                 <SafeAreaView style = {{ flex: 1, ...styles.background }}>
-                    <Library setPreviewWindowManga = { setPreviewWindowManga } />
+                    <Library onMangaPress = { setPreviewWindowMangaID }/>
                     <MangaPreview
-                        visible = { !!previewWindowManga }
-                        mangaId = { previewWindowManga }
+                        visible = { !!previewWindowMangaID }
+                        mangaId = { previewWindowMangaID }
                         setReaderData = { (manga, chapterIndex) => {
-                            setPreviewWindowManga(0);
+                            setPreviewWindowMangaID(0);
                             setReaderData({ manga, chapterIndex });
                         } }
-                        onDismiss = { () => setPreviewWindowManga(0) }
+                        onDismiss = { () => setPreviewWindowMangaID(0) }
                     />
                     <Reader
                         data = { readerData }
