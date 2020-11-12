@@ -20,5 +20,10 @@ export default StyleSheet.create({
         fontFamily: "SF-Compact-Text-Light",
         color: COLORS.text,
         fontSize: 23
+    },
+    settingTitleText: {
+        fontFamily: "SF-Pro-Text-Regular",
+        color: COLORS.text,
+        fontSize: 18
     }
 });
