@@ -10,6 +10,13 @@ export default StyleSheet.create({
         flex: 1
     },
     pageImage: {
-        flex: 1
+        flex: 1,
+        zIndex: 1
+    },
+    pageBuffer: {
+        position: "absolute",
+        zIndex: 0,
+        left: "50%",
+        top: "50%"
     }
 });
