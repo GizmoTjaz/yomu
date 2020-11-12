@@ -22,6 +22,7 @@ import MainStore from "../stores/Main";
 registerRootComponent(function App () {
 
     const
+        [ dataStore, setDataStore ] = useState(null),
         [ previewWindowMangaID, setPreviewWindowMangaID ] = useState(0),
         [ readerData, setReaderData ] = useState({});
 
@@ -33,9 +34,13 @@ registerRootComponent(function App () {
         "SF-Compact-Text-Bold": require("../../assets/fonts/SF-Compact-Text-Bold.otf")
     });
 
-    if (areFontsLoaded) {
+    useEffect(() => {
+        MainStore().then(store => setDataStore(store));
+    }, []);
+
+    if (areFontsLoaded && dataStore) {
         return (
-            <Provider store = { MainStore }>
+            <Provider store = { dataStore }>
                 <StatusBar style = "light" />
                 <SafeAreaView style = {{ flex: 0, ...styles.background }} />
                 <SafeAreaView style = {{ flex: 1, ...styles.background }}>
