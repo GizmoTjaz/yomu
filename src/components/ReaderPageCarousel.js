@@ -1,5 +1,6 @@
 // Modules
-import React from "react";
+import React, { useRef, useEffect } from "react"
+import { Dimensions } from "react-native";
 
 // Components
 import { ScrollView } from "react-native";
@@ -8,15 +9,39 @@ import ReaderPage from "./ReaderPage";
 // Styles
 import styles from "../styles/ReaderPageCarousel";
 
-export default function ReaderPageCarousel ({ pages, onPageChange }) {
+export default function ReaderPageCarousel ({ pages, onPageChange, readingDirection }) {
+
+    const scrollViewRef = useRef();
+    
+    function invertScrollView () {
+        if (scrollViewRef.current) {
+            
+            const x = readingDirection === "rtl"
+                ? Math.floor(Dimensions.get("window").width * pages.length)
+                : 0;
+
+            scrollViewRef.current.scrollTo({ x });
+        }
+    }
+
+    useEffect(() => {
+        invertScrollView();
+    }, [ readingDirection ]);
+
     return (
         <ScrollView
+            ref = { scrollViewRef }
             horizontal = { true }
             pagingEnabled = { true }
-            contentContainerStyle =  { styles.pageContainer }
             showsHorizontalScrollIndicator = { false }
-            onScroll = { (e) => onPageChange(Math.floor(e.nativeEvent.contentOffset.x / e.nativeEvent.layoutMeasurement.width)) }
+            onScroll = { (e) => {
+
+                const event = e.nativeEvent;
+                onPageChange(Math.floor(event.contentOffset.x / event.layoutMeasurement.width))
+
+            } }
             scrollEventThrottle = { 4 }
+            contentContainerStyle =  {[ styles.pageContainer, { transform: [{ scaleX: readingDirection === "rtl" ? 1 : 1 }] } ]}
         >
             {
                 pages.map((page, index) => (
@@ -28,22 +53,4 @@ export default function ReaderPageCarousel ({ pages, onPageChange }) {
             }
         </ScrollView>
     );
-
-    /*
-    return (
-        <ImageViewer
-            imageUrls = { pages.map(page => ({ url: page })) }
-            onChange = { onPageChange }
-            saveToLocalByLongPress = { false }
-            useNativeDriver = { true }
-            enablePreload = { true }
-            renderIndicator = { () => {} }
-            loadingRender = { () => (
-                <ActivityIndicator
-                    size = "large"
-                    color = { COLORS.text }
-                />
-            ) }
-        />
-    );*/
 }

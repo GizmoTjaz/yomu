@@ -10,6 +10,9 @@ module.exports = {
         MANGADEX: "https://www.mangadex.org/api/v2"
     },
     DEFAULT_DATA: {
-        favoriteManga: {}
+        favoriteManga: {},
+        readerSettings: {
+            readingDirection: "ltr"
+        }
     }
 };

@@ -2,12 +2,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
 import { setStatusBarHidden } from "expo-status-bar";
+import { connect } from "react-redux";
 
 // Components
 import { Modal, SafeAreaView, View, Text, ActivityIndicator, Animated } from "react-native";
+import { TapGestureHandler, State } from "react-native-gesture-handler";
 import RoundIconButton from "./RoundIconButton";
 import ReaderPageCarousel from "./ReaderPageCarousel";
-import { TapGestureHandler, State } from "react-native-gesture-handler";
+import ReaderSettings from "./ReaderSettings";
 
 // Styles
 import styles from "../styles/Reader";
@@ -18,12 +20,13 @@ import { getChapter } from "../utils/api";
 // Variables
 import { COLORS } from "../utils/constants";
 
-export default function Reader ({ data: { manga, chapterIndex }, onClose }) {
+function Reader ({ data: { manga, chapterIndex }, onClose, changeReaderSetting, readerSettings }) {
 
     const
         [ chapter, setChapter ] = useState(null),
         [ overlayVisibility, setOverlayVisibility ] = useState(1),
-        [ pageIndex, setPageIndex ] = useState(0);
+        [ pageIndex, setPageIndex ] = useState(0),
+        [ settingsVisibility, setSettingsVisibility ] = useState(false);
 
     const
         opacityValue = useRef(new Animated.Value(1)).current,
@@ -37,7 +40,7 @@ export default function Reader ({ data: { manga, chapterIndex }, onClose }) {
             getChapter(manga.chapters[chapterIndex].id).then(chapter => {
                 setChapter(chapter);
                 setPageIndex(0);
-            }).catch(err => {
+            }).catch(() => {
                 Alert.alert("Error", "Couldn't fetch chapter pages.", [
                     {
                         text: "OK",
@@ -49,7 +52,7 @@ export default function Reader ({ data: { manga, chapterIndex }, onClose }) {
     }, [ manga, chapterIndex ]);
 
     function tapGestureEvent (event) {
-        if (event.nativeEvent.state === State.END) {
+        if (event.nativeEvent.state === State.END && event.nativeEvent.y > 90) {
 
             opacityState.current = !opacityState.current;
             setStatusBarHidden(!opacityState.current, "fade");
@@ -63,6 +66,8 @@ export default function Reader ({ data: { manga, chapterIndex }, onClose }) {
         }
     }
 
+    // console.log(readerSettings.readingDirection);
+
     return (
         <Modal
             animationType = "slide"
@@ -71,7 +76,6 @@ export default function Reader ({ data: { manga, chapterIndex }, onClose }) {
         >
             <TapGestureHandler
                 numberOfTaps = { 1 }
-                maxDelayMs = { 0 }
                 onHandlerStateChange = { tapGestureEvent }
             >
                 <View style = {{ ...styles.container, ...(chapter ? {} : styles.loadingContainer) }}>
@@ -88,6 +92,7 @@ export default function Reader ({ data: { manga, chapterIndex }, onClose }) {
                                     <RoundIconButton
                                         icon = "ios-cog"
                                         buttonStyle = { styles.hoverButton }
+                                        onPress = { () => setSettingsVisibility(true) }
                                     />
                                     <View style = {{ ...styles.hoverBox, ...styles.titleContainer }}>
                                         <Text style = { styles.volumeChapterLabel }>
@@ -111,6 +116,7 @@ export default function Reader ({ data: { manga, chapterIndex }, onClose }) {
                                         style = { styles.pageImage }
                                         pages = { chapter.pages }
                                         onPageChange = { index => setPageIndex(index) }
+                                        readingDirection = { readerSettings.readingDirection }
                                     />
                                 </View>
                                 <Animated.View
@@ -126,6 +132,12 @@ export default function Reader ({ data: { manga, chapterIndex }, onClose }) {
                                         </Text>
                                     </View>
                                 </Animated.View>
+                                <ReaderSettings
+                                    visible = { settingsVisibility }
+                                    readerSettingChange = { changeReaderSetting }
+                                    readerSettings = { readerSettings }
+                                    onClose = { () => setSettingsVisibility(false) }
+                                />
                             </SafeAreaView>
                         ) : (
                             <ActivityIndicator
@@ -140,41 +152,14 @@ export default function Reader ({ data: { manga, chapterIndex }, onClose }) {
     );
 };
 
+function stateMap ({ readerSettings}) {
+    return { readerSettings };
+}
 
-/*
+function dispatchMap (dispatch) {
+    return {
+        changeReaderSetting: (payloadType, payload) => dispatch({ type: payloadType, payload })
+    };
+}
 
-
-<Animated.View style = {{ ...styles.topContainer, opacity: fadeAnim }}>
-                                    <RoundIconButton
-                                        icon = "ios-cog"
-                                        buttonStyle = { styles.hoverButton }
-                                    />
-                                    <View style = {{ ...styles.hoverBox, ...styles.volumeChapterContainer }}>
-                                        <Text style = { styles.volumeChapterLabel }>
-                                            { `Volume ${ chapter.volume }, Chapter ${ chapter.chapter }` }
-                                        </Text>
-                                        <Text style = { styles.chapterTitle }>{ chapter.title }</Text>
-                                    </View>
-                                    <RoundIconButton
-                                        icon = "ios-close"
-                                        size = { 30 }
-                                        buttonStyle = { styles.hoverButton }
-                                        onPress = { () => onClose() }
-                                    />
-                                </Animated.View>
-                                <View style = { styles.pageCarousel }>
-                                    <Image
-                                        style = { styles.pageImage }
-                                        source = { { uri: chapter.pages[pageIndex] } }
-                                        resizeMode = "contain"
-                                    />
-                                </View>
-                                <Animated.View style = {{ ...styles.bottomContainer, opacity: fadeAnim }}>
-                                    <View style = {{ ...styles.hoverBox, ...styles.pageCounterContainer }}>
-                                        <Text style = { styles.pageCounter }>
-                                            { `${ pageIndex + 1 } / ${ chapter.pages.length }` }
-                                        </Text>
-                                    </View>
-                                </Animated.View>
-
-*/
+export default connect(stateMap, dispatchMap)(Reader);

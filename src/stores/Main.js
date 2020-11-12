@@ -25,7 +25,8 @@ export default async function () {
                 setValue("favoriteManga", updatedFavoriteManga);
                 return updatedFavoriteManga;
     
-                break;
+            case "CHANGE_READING_DIRECTION":
+                return { ...state, readerSettings: { ...state.readerSettings, readingDirection: payload } };
             default:
         }
     
