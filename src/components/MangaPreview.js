@@ -31,7 +31,7 @@ const detailedInfoLabels = [
     [ "Chapters", "chapterCount" ]
 ];
 
-export default function MangaPreview ({ visible, onDismiss, mangaId, setReaderData }) {
+export default function MangaPreview ({ visible, onClose, mangaId, setReaderData }) {
 
     const
         [ manga, setManga ] = useState(mangaHusk),
@@ -72,14 +72,14 @@ export default function MangaPreview ({ visible, onDismiss, mangaId, setReaderDa
         <Modal
             animationType = "slide"
             visible = { visible }
-            onDismiss = { onDismiss }
+            onDismiss = { onClose }
             transparent = { true }
         >
             <FlingGestureHandler
                 direction = { Directions.DOWN }
                 onHandlerStateChange = { ({ nativeEvent }) => {
                     if (nativeEvent.state === State.ACTIVE) {
-                        onDismiss();
+                        onClose();
                     }
                 }}
             >
