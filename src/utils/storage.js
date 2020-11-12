@@ -2,7 +2,7 @@
 import { getItem, setItem } from "@react-native-community/async-storage";
 
 // Variables
-import { DEFAULT_VALUES } from "./constants";
+import { DEFAULT_DATA } from "./constants";
 
 /**
  * Returns value from storage
@@ -14,7 +14,7 @@ async function getValue (key) {
     const rawData = await getItem(key);
 
     if (rawData === null) {
-        return DEFAULT_VALUES[key];
+        return DEFAULT_DATA[key];
     } else {
         return JSON.parse(rawData);
     }
@@ -28,7 +28,7 @@ async function getValue (key) {
 function setValue (key, value) {
 
     if (typeof value === undefined) {
-        value = DEFAULT_VALUES[key];
+        value = DEFAULT_DATA[key];
     }
 
     setItem(key, JSON.stringify(value));
