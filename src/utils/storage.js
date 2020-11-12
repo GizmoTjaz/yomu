@@ -48,7 +48,7 @@ async function getSavedData () {
     const data = { ...DEFAULT_DATA };
 
     // Re-creates save data by promisifying keys, getting key-value pairs and assigning them to the data object (IDK EITHER, JUST WORKS)
-    const resolvedData = (await Promise.all(Object.keys(data).map(key => getValue(key, true)))).forEach(({ key, value }) => {
+    (await Promise.all(Object.keys(data).map(key => getValue(key, true)))).forEach(({ key, value }) => {
         Object.assign(data, { [key]: value });
     });
 
