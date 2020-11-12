@@ -31,7 +31,8 @@ registerRootComponent(function App () {
         "SF-Pro-Text-Bold": require("../../assets/fonts/SF-Pro-Text-Bold.otf"),
         "SF-Pro-Text-Semibold": require("../../assets/fonts/SF-Pro-Text-Semibold.otf"),
         "SF-Compact-Text-Light": require("../../assets/fonts/SF-Compact-Text-Light.otf"),
-        "SF-Compact-Text-Bold": require("../../assets/fonts/SF-Compact-Text-Bold.otf")
+        "SF-Compact-Text-Bold": require("../../assets/fonts/SF-Compact-Text-Bold.otf"),
+        "SF-Pro-Text-Regular": require("../../assets/fonts/SF-Pro-Text-Regular.otf")
     });
 
     useEffect(() => {
@@ -52,7 +53,7 @@ registerRootComponent(function App () {
                             setPreviewWindowMangaID(0);
                             setReaderData({ manga, chapterIndex });
                         } }
-                        onDismiss = { () => setPreviewWindowMangaID(0) }
+                        onClose = { () => setPreviewWindowMangaID(0) }
                     />
                     <Reader
                         data = { readerData }
