@@ -7,6 +7,7 @@ import { useFonts } from "expo-font";
 import { Fragment } from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native";
+import { Provider } from "react-redux";
 import Library from "./Library";
 import MangaPreview from "./MangaPreview";
 import Reader from "./Reader";
@@ -14,6 +15,9 @@ import Reader from "./Reader";
 // Styles
 import styles from "../styles/App";
 import { getManga } from "../utils/api";
+
+// Stores
+import MainStore from "../stores/Main";
 
 registerRootComponent(function App () {
 
@@ -31,7 +35,7 @@ registerRootComponent(function App () {
 
     if (areFontsLoaded) {
         return (
-            <Fragment>
+            <Provider store = { MainStore }>
                 <StatusBar style = "light" />
                 <SafeAreaView style = {{ flex: 0, ...styles.background }} />
                 <SafeAreaView style = {{ flex: 1, ...styles.background }}>
@@ -50,7 +54,7 @@ registerRootComponent(function App () {
                         onClose = { () => setReaderData({}) }
                     />
                 </SafeAreaView>
-            </Fragment>
+            </Provider>
         );
     } else {
         return (
