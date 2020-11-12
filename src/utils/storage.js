@@ -7,17 +7,22 @@ import { DEFAULT_DATA } from "./constants";
 /**
  * Returns value from storage
  * @param {String} key Key name
+ * @param {Boolean} returnFullObject Returns key-value pair of requested key
  * @returns {Promise<Any>} Stored value
  */
-async function getValue (key) {
+async function getValue (key, returnFullObject) {
     
     const rawData = await AsyncStorage.getItem(key).catch(() => null);
+    let response = DEFAULT_DATA[key];
 
-    if (rawData === null) {
-        return DEFAULT_DATA[key];
-    } else {
-        return JSON.parse(rawData);
+    if (rawData !== null) {
+        response = JSON.parse(rawData);
     }
+
+    return returnFullObject
+    ?  { key, value: response }
+    : response;
+
 }
 
 /**
@@ -40,10 +45,12 @@ function setValue (key, value) {
  */
 async function getSavedData () {
 
-    const data = DEFAULT_DATA;
+    const data = { ...DEFAULT_DATA };
 
-    const incomingData = await Promise.all(Object.keys(data).map(key => ({ key, value: getValue(key) })));
-    incomingData.forEach(({ key, value }) => data[key] = value);
+    // Re-creates save data by promisifying keys, getting key-value pairs and assigning them to the data object (IDK EITHER, JUST WORKS)
+    const resolvedData = (await Promise.all(Object.keys(data).map(key => getValue(key, true)))).forEach(({ key, value }) => {
+        Object.assign(data, { [key]: value });
+    });
 
     data.favoriteManga = {
         22151: {"id":22151,"title":"Kanojo, Okarishimasu","artwork":"https://www.mangadex.org//images/manga/22151.jpg?1603448008"},
