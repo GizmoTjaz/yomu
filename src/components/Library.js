@@ -12,7 +12,7 @@ import styles from "../styles/Library";
 // Contexts
 import FavoriteManga from "../stores/FavoriteManga";
 
-export default function Library ({ setPreviewWindowManga }) {
+export default function Library ({ onMangaPress }) {
 
   const favorites = FavoriteManga(state => state.favorites);
 
@@ -27,7 +27,7 @@ export default function Library ({ setPreviewWindowManga }) {
               renderItem = { ({ item: manga }) => (
                 <TouchableOpacity
                   style = { styles.mangaContainer }
-                  onPress = { () => setPreviewWindowManga(manga.id) }
+                  onPress = { () => onMangaPress(manga.id) }
                 >
                   <Image
                     style = { styles.mangaArtwork }
