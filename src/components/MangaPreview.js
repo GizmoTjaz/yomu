@@ -44,7 +44,7 @@ export default function MangaPreview ({ visible, onDismiss, mangaId, setReaderDa
         getManga(mangaId).then(manga => {
             setManga(manga);
             setLoading(false);
-        }).catch(err => {
+        }).catch(() => {
             
             Alert.alert("Error", "Couldn't fetch manga.", [
                 {
