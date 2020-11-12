@@ -14,7 +14,6 @@ export default function ReaderPageCarousel ({ pages, onPageChange }) {
             horizontal = { true }
             pagingEnabled = { true }
             contentContainerStyle =  { styles.pageContainer }
-            maximumZoomScale = { 2 }
             showsHorizontalScrollIndicator = { false }
             onScroll = { (e) => onPageChange(Math.floor(e.nativeEvent.contentOffset.x / e.nativeEvent.layoutMeasurement.width)) }
             scrollEventThrottle = { 4 }
@@ -29,4 +28,22 @@ export default function ReaderPageCarousel ({ pages, onPageChange }) {
             }
         </ScrollView>
     );
+
+    /*
+    return (
+        <ImageViewer
+            imageUrls = { pages.map(page => ({ url: page })) }
+            onChange = { onPageChange }
+            saveToLocalByLongPress = { false }
+            useNativeDriver = { true }
+            enablePreload = { true }
+            renderIndicator = { () => {} }
+            loadingRender = { () => (
+                <ActivityIndicator
+                    size = "large"
+                    color = { COLORS.text }
+                />
+            ) }
+        />
+    );*/
 }
