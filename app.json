@@ -3,8 +3,12 @@
     "name": "Yomu",
     "slug": "yomu",
     "version": "0.0.1",
+    "privacy": "unlisted",
+    "githubUrl": "https://github.com/GizmoTjaz/yomu",
     "orientation": "portrait",
     "icon": "./assets/icon/ios/icon.png",
+    "backgroundColor": "#16151D",
+    "primaryColor": "#5200CE",
     "splash": {
       "image": "./assets/splash/splash.png",
       "resizeMode": "contain",

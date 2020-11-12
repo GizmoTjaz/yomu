@@ -1,1 +1,1 @@
-# Mobile manga reading app built using React Native.
+## Mobile manga reading app built using React Native.
