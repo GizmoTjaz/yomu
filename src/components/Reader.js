@@ -24,13 +24,12 @@ function Reader ({ data: { manga, chapterIndex }, onClose, changeReaderSetting, 
 
     const
         [ chapter, setChapter ] = useState(null),
-        [ overlayVisibility, setOverlayVisibility ] = useState(1),
         [ pageIndex, setPageIndex ] = useState(0),
         [ settingsVisibility, setSettingsVisibility ] = useState(false);
 
     const
-        opacityValue = useRef(new Animated.Value(1)).current,
-        opacityState = useRef(true);
+        overlayOpacityValue = useRef(new Animated.Value(1)).current,
+        overlayOpacityState = useRef(true).current;
 
     useEffect(() => {
         if (manga && manga.chapters) {
@@ -54,15 +53,14 @@ function Reader ({ data: { manga, chapterIndex }, onClose, changeReaderSetting, 
     function tapGestureEvent (event) {
         if (event.nativeEvent.state === State.END && event.nativeEvent.y > 90) {
 
-            opacityState.current = !opacityState.current;
-            setStatusBarHidden(!opacityState.current, "fade");
+            overlayOpacityState = !overlayOpacityState;
+            setStatusBarHidden(!overlayOpacityState, "fade");
 
-            Animated.timing(opacityValue, {
-                toValue: opacityState.current ? 1 : 0,
+            Animated.timing(overlayOpacityValue, {
+                toValue: overlayOpacityState ? 1 : 0,
                 duration: 230,
                 useNativeDriver: true
             }).start();
-
         }
     }
 
@@ -84,7 +82,7 @@ function Reader ({ data: { manga, chapterIndex }, onClose, changeReaderSetting, 
                                     style = {{
                                         ...styles.floatingContainer,
                                         ...styles.topContainer,
-                                        opacity: opacityValue
+                                        opacity: overlayOpacityValue
                                     }}
                                 >
                                     <RoundIconButton
@@ -109,19 +107,20 @@ function Reader ({ data: { manga, chapterIndex }, onClose, changeReaderSetting, 
                                         onPress = { () => onClose() }
                                     />
                                 </Animated.View>
-                                <View style = {{ ...styles.floatingContainer, ...styles.pageContainer }}>
-                                    <ReaderPageCarousel
-                                        style = { styles.pageImage }
-                                        pages = { chapter.pages }
-                                        onPageChange = { index => setPageIndex(index) }
-                                        readingDirection = { readerSettings.readingDirection }
-                                    />
+                                <View style = {[ styles.floatingContainer, styles.pageCarouselContainer ]}>
+                                    <View style = {[ styles.pageCarouselContainer ]}>
+                                        <ReaderPageCarousel
+                                            pages = { chapter.pages }
+                                            onPageChange = { index => setPageIndex(index) }
+                                            readingDirection = { readerSettings.readingDirection }
+                                        />
+                                    </View>
                                 </View>
                                 <Animated.View
                                     style = {{
                                         ...styles.floatingContainer,
                                         ...styles.bottomContainer,
-                                        opacity: opacityValue
+                                        opacity: overlayOpacityValue
                                     }}
                                 >
                                     <View style = {{ ...styles.hoverBox, ...styles.pageCounterContainer }}>

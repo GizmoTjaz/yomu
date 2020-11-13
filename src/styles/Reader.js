@@ -54,12 +54,9 @@ export default StyleSheet.create({
         textAlign: "center",
         marginBottom: 5
     },
-    pageContainer: {
-        flex: 13,
+    pageCarouselContainer: {
+        flex: 1,
         zIndex: 1
-    },
-    pageImage: {
-        flex: 1
     },
     bottomContainer: {
         flexDirection: "row",
