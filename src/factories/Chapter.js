@@ -36,7 +36,7 @@ export default function constructChapter (rawChapter) {
             id: rawChapter.id,
             title: rawChapter.title || "No Title",
             chapter: parseInt(rawChapter.chapter),
-            volume: chapter.volume ? parseInt(rawChapter.volume) : null,
+            volume: rawChapter.volume ? parseInt(rawChapter.volume) : null,
             pages: rawChapter.pages.map(page => {
                 return encodeURI(`${rawChapter.server}${rawChapter.hash}/${page}`);
             })
