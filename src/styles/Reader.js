@@ -1,9 +1,6 @@
 // Modules
 import { StyleSheet } from "react-native";
 
-// Variables
-import { COLORS } from "../utils/constants";
-
 export default StyleSheet.create({
     container: {
         backgroundColor: "#000000",
@@ -14,11 +11,18 @@ export default StyleSheet.create({
         justifyContent: "center" /* center activityIndicator */
     },
     safeAreaContainer: {
-        flexDirection: "column",
         flex: 1
     },
-    floatingContainer: {
-        
+    pageCarouselContainer: {
+        flex: 1
+    }
+});
+
+/*
+floatingContainer: {
+        position: "absolute",
+        width: "100%",
+        height: "100%"
     },
     hoverButton: {
         backgroundColor: COLORS.overlayBackground,
@@ -55,7 +59,9 @@ export default StyleSheet.create({
         marginBottom: 5
     },
     pageCarouselContainer: {
-        flex: 1,
+        position: "absolute",
+        width: "100%",
+        height: "100%",
         zIndex: 1
     },
     bottomContainer: {
@@ -76,4 +82,4 @@ export default StyleSheet.create({
         fontSize: 16,
         textAlign: "center"
     }
-});
+*/

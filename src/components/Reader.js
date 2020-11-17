@@ -1,14 +1,12 @@
 // Modules
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert } from "react-native";
-import { setStatusBarHidden } from "expo-status-bar";
 import { connect } from "react-redux";
 
 // Components
-import { Modal, SafeAreaView, View, Text, ActivityIndicator, Animated } from "react-native";
-import { TapGestureHandler, State } from "react-native-gesture-handler";
-import RoundIconButton from "./RoundIconButton";
+import { Modal, SafeAreaView, View, ActivityIndicator } from "react-native";
 import ReaderPageCarousel from "./ReaderPageCarousel";
+import ReaderOverlay from "./ReaderOverlay";
 import ReaderSettings from "./ReaderSettings";
 
 // Styles
@@ -26,10 +24,6 @@ function Reader ({ data: { manga, chapterIndex }, onClose, changeReaderSetting, 
         [ chapter, setChapter ] = useState(null),
         [ pageIndex, setPageIndex ] = useState(0),
         [ settingsVisibility, setSettingsVisibility ] = useState(false);
-
-    const
-        overlayOpacityValue = useRef(new Animated.Value(1)).current,
-        overlayOpacityState = useRef(true);
 
     useEffect(() => {
         if (manga && manga.chapters) {
@@ -50,99 +44,42 @@ function Reader ({ data: { manga, chapterIndex }, onClose, changeReaderSetting, 
         }
     }, [ manga, chapterIndex ]);
 
-    function tapGestureEvent (event) {
-        if (event.nativeEvent.state === State.END && event.nativeEvent.y > 90) {
-
-            overlayOpacityState.current = !overlayOpacityState.current;
-            setStatusBarHidden(!overlayOpacityState.current, "fade");
-
-            Animated.timing(overlayOpacityValue, {
-                toValue: overlayOpacityState.current ? 1 : 0,
-                duration: 230,
-                useNativeDriver: true
-            }).start();
-        }
-    }
-
     return (
         <Modal
             animationType = "slide"
             visible = { !!manga }
             presentationStyle = { "fullScreen" }
         >
-            <TapGestureHandler
-                numberOfTaps = { 1 }
-                onHandlerStateChange = { tapGestureEvent }
-            >
-                <View style = {{ ...styles.container, ...(chapter ? {} : styles.loadingContainer) }}>
-                    {
-                        chapter ? (
-                            <SafeAreaView style = { styles.safeAreaContainer }>
-                                <Animated.View
-                                    style = {{
-                                        ...styles.floatingContainer,
-                                        ...styles.topContainer,
-                                        opacity: overlayOpacityValue
-                                    }}
-                                >
-                                    <RoundIconButton
-                                        icon = "ios-cog"
-                                        buttonStyle = { styles.hoverButton }
-                                        onPress = { () => setSettingsVisibility(true) }
-                                    />
-                                    <View style = {{ ...styles.hoverBox, ...styles.titleContainer }}>
-                                        <Text style = { styles.volumeChapterLabel }>
-                                            { `${
-                                                chapter.volume
-                                                ? `Volume ${ chapter.volume }, `
-                                                : ""
-                                            }Chapter ${ chapter.chapter }` }
-                                        </Text>
-                                        <Text style = { styles.titleLabel }>{ chapter.title }</Text>
-                                    </View>
-                                    <RoundIconButton
-                                        icon = "ios-close"
-                                        size = { 30 }
-                                        buttonStyle = { styles.hoverButton }
-                                        onPress = { () => onClose() }
-                                    />
-                                </Animated.View>
-                                <View style = {[ styles.floatingContainer, styles.pageCarouselContainer ]}>
-                                    <ReaderPageCarousel
-                                        pages = { chapter.pages }
-                                        onPageChange = { index => setPageIndex(index) }
-                                        readingDirection = { readerSettings.readingDirection }
-                                    />
-                                </View>
-                                <Animated.View
-                                    style = {{
-                                        ...styles.floatingContainer,
-                                        ...styles.bottomContainer,
-                                        opacity: overlayOpacityValue
-                                    }}
-                                >
-                                    <View style = {{ ...styles.hoverBox, ...styles.pageCounterContainer }}>
-                                        <Text style = { styles.pageCounterLabel }>
-                                            { `${Math.max(1, pageIndex + 1)} / ${ chapter.pages.length }` }
-                                        </Text>
-                                    </View>
-                                </Animated.View>
-                                <ReaderSettings
-                                    visible = { settingsVisibility }
-                                    readerSettingChange = { changeReaderSetting }
-                                    readerSettings = { readerSettings }
-                                    onClose = { () => setSettingsVisibility(false) }
-                                />
-                            </SafeAreaView>
-                        ) : (
-                            <ActivityIndicator
-                                size = "large"
-                                color = { COLORS.text }
+            <View style = {[ styles.container, chapter ? {} : styles.loadingContainer ]}>
+                {
+                    chapter ? (
+                        <SafeAreaView style = { styles.safeAreaContainer }>
+                            <ReaderOverlay
+                                chapter = { chapter }
+                                pageIndex = { pageIndex }
+                                setSettingsVisibility = { setSettingsVisibility }
+                                closeOverlay = { onClose }
                             />
-                        )
-                    }
-                </View>
-            </TapGestureHandler>
+                            <ReaderPageCarousel
+                                pages = { chapter.pages }
+                                onPageChange = { index => setPageIndex(index) }
+                                readingDirection = { readerSettings.readingDirection }
+                            />
+                            <ReaderSettings
+                                visible = { settingsVisibility }
+                                readerSettings = { readerSettings }
+                                readerSettingChange = { changeReaderSetting }
+                                onClose = { () => setSettingsVisibility(false) }
+                            />
+                        </SafeAreaView>
+                    ) : (
+                        <ActivityIndicator
+                            size = "large"
+                            color = { COLORS.text }
+                        />
+                    )
+                }
+            </View>
         </Modal>
     );
 };
