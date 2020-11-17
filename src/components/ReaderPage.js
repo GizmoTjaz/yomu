@@ -188,20 +188,27 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
                                     onGestureEvent = { panGestureEvent }
                                     onHandlerStateChange = { panGestureStateChange }
                                 >
-                                    <Animated.Image
-                                        style = {[ styles.pageImage, { transform: [
-                                            { translateX: transformedOffset.x },
-                                            { translateY: transformedOffset.y }
-                                        ] } ]}
-                                        source = {{ uri: page }}
-                                        resizeMode = "contain"
-                                    />
+                                    <Animated.View
+                                        style = {[
+                                            { transform: [
+                                                { translateX: transformedOffset.x },
+                                                { translateY: transformedOffset.y }
+                                            ] },
+                                            styles.pageImage
+                                        ]}
+                                    >
+                                        <Image
+                                            style = {[ styles.pageImage ]}
+                                            source = {{ uri: page }}
+                                            resizeMode = "contain"
+                                        />
+                                        <ActivityIndicator
+                                            size = "large"
+                                            color = { COLORS.text }
+                                            style = { styles.pageBuffer }
+                                        />
+                                    </Animated.View>
                                 </PanGestureHandler>
-                                <ActivityIndicator
-                                    size = "large"
-                                    color = { COLORS.text }
-                                    style = { styles.pageBuffer }
-                                />
                             </Animated.View> 
                         </PinchGestureHandler>
                     </Animated.View>
