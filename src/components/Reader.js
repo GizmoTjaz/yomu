@@ -29,7 +29,7 @@ function Reader ({ data: { manga, chapterIndex }, onClose, changeReaderSetting, 
 
     const
         overlayOpacityValue = useRef(new Animated.Value(1)).current,
-        overlayOpacityState = useRef(true).current;
+        overlayOpacityState = useRef(true);
 
     useEffect(() => {
         if (manga && manga.chapters) {
@@ -53,11 +53,11 @@ function Reader ({ data: { manga, chapterIndex }, onClose, changeReaderSetting, 
     function tapGestureEvent (event) {
         if (event.nativeEvent.state === State.END && event.nativeEvent.y > 90) {
 
-            overlayOpacityState = !overlayOpacityState;
-            setStatusBarHidden(!overlayOpacityState, "fade");
+            overlayOpacityState.current = !overlayOpacityState.current;
+            setStatusBarHidden(!overlayOpacityState.current, "fade");
 
             Animated.timing(overlayOpacityValue, {
-                toValue: overlayOpacityState ? 1 : 0,
+                toValue: overlayOpacityState.current ? 1 : 0,
                 duration: 230,
                 useNativeDriver: true
             }).start();
@@ -108,13 +108,11 @@ function Reader ({ data: { manga, chapterIndex }, onClose, changeReaderSetting, 
                                     />
                                 </Animated.View>
                                 <View style = {[ styles.floatingContainer, styles.pageCarouselContainer ]}>
-                                    <View style = {[ styles.pageCarouselContainer ]}>
-                                        <ReaderPageCarousel
-                                            pages = { chapter.pages }
-                                            onPageChange = { index => setPageIndex(index) }
-                                            readingDirection = { readerSettings.readingDirection }
-                                        />
-                                    </View>
+                                    <ReaderPageCarousel
+                                        pages = { chapter.pages }
+                                        onPageChange = { index => setPageIndex(index) }
+                                        readingDirection = { readerSettings.readingDirection }
+                                    />
                                 </View>
                                 <Animated.View
                                     style = {{
