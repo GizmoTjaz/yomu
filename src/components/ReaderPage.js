@@ -19,8 +19,7 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
 
     // Pan to move
     const
-        offsetX = useRef(new Animated.Value(0)).current,
-        offsetY = useRef(new Animated.Value(0)).current,
+        offset = useRef({ x: new Animated.Value(0), y: new Animated.Value(0) }).current,
         lastOffset = useRef({ x: 0, y: 0 });
 
     // Pinch to zoom
@@ -83,9 +82,13 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
                 });
             }
             
-            if (lastScale.current === 1) {
-                //isZoomed.current = true;
-                //setAllowScrolling(false);
+            // Toggle page swiping
+            if (absoluteScale > 1) {
+                isZoomed.current = true;
+                setAllowScrolling(false);
+            } else {
+                isZoomed.current = false;
+                setAllowScrolling(true);
             }
         }
 
@@ -93,8 +96,8 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
 
     const panGestureEvent = Animated.event([
         { nativeEvent: {
-            translationX: offsetX,
-            translationY: offsetY
+            translationX: offset.x,
+            translationY: offset.y
         } }
     ], {
         useNativeDriver: true
@@ -104,13 +107,13 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
 
         // X
         lastOffset.current.x += x;
-        offsetX.setOffset(lastOffset.current.x);
-        offsetX.setValue(0);
+        offset.x.setOffset(lastOffset.current.x);
+        offset.x.setValue(0);
 
         // Y
         lastOffset.current.y += y;
-        offsetY.setOffset(lastOffset.current.y);
-        offsetY.setValue(0);
+        offset.y.setOffset(lastOffset.current.y);
+        offset.y.setValue(0);
 
     }
 
@@ -123,46 +126,6 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
         }
 
     }
-
-    
-
-    /*function pinchGestureStateChange (e) {
-
-        const event = e.nativeEvent;
-
-        if (event.state === State.BEGAN && !isZoomed.current) {
-            isZoomed.current = true;
-            setAllowScrolling(false);
-        } else if (event.state === State.END) {
-
-            isZoomed.current = false;
-
-            if (event.scale > 2) {
-
-                Animated.timing(pinchScale, {
-                    toValue: 2,
-                    duration: 150,
-                    easing: Easing.out(Easing.back(1)),
-                    useNativeDriver: true
-                }).start(() => {
-                    setAllowScrolling(false);
-                });
-
-            } else if (event.scale < 1) {
-                
-                Animated.timing(pinchScale, {
-                    toValue: 1,
-                    duration: 200,
-                    easing: Easing.out(Easing.back(1)),
-                    useNativeDriver: true
-                }).start(() => {
-                    setAllowScrolling(true);
-                });
-
-            }
-
-        }
-    }*/
 
     function doubleTapGestureStateChange (event) {
         if (event.nativeEvent.state === State.END) {
@@ -207,8 +170,8 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
                                 >
                                     <Animated.Image
                                         style = {[ styles.pageImage, { transform: [
-                                            { translateX: offsetX },
-                                            { translateY: offsetY }
+                                            { translateX: offset.x },
+                                            { translateY: offset.y }
                                         ] } ]}
                                         source = {{ uri: page }}
                                         resizeMode = "contain"
