@@ -18,7 +18,7 @@ export default StyleSheet.create({
         flex: 1
     },
     floatingContainer: {
-        flex: 1
+        
     },
     hoverButton: {
         backgroundColor: COLORS.overlayBackground,
