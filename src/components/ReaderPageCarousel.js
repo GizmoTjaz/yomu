@@ -1,5 +1,5 @@
 // Modules
-import React, { useRef, useEffect } from "react"
+import React, { useRef, useEffect, useState } from "react"
 import { Dimensions } from "react-native";
 
 // Components
@@ -12,6 +12,8 @@ import styles from "../styles/ReaderPageCarousel";
 export default function ReaderPageCarousel ({ pages, onPageChange, readingDirection }) {
 
     const scrollViewRef = useRef();
+
+    const [ allowScrolling, setAllowScrolling ] = useState(true);
     
     function invertScrollView () {
         if (scrollViewRef.current) {
@@ -34,6 +36,7 @@ export default function ReaderPageCarousel ({ pages, onPageChange, readingDirect
             horizontal = { true }
             pagingEnabled = { true }
             showsHorizontalScrollIndicator = { false }
+            scrollEnabled = { allowScrolling }
             onScroll = { (e) => {
 
                 const event = e.nativeEvent;
@@ -48,6 +51,7 @@ export default function ReaderPageCarousel ({ pages, onPageChange, readingDirect
                     <ReaderPage
                         key = { index }
                         page = { page }
+                        setAllowScrolling = { setAllowScrolling }
                     />
                 ))
             }
