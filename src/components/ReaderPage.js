@@ -1,4 +1,5 @@
 // Modules
+import { setStatusBarHidden } from "expo-status-bar";
 import React, { useRef } from "react";
 import { Animated, Dimensions, Easing } from "react-native";
 
@@ -20,7 +21,8 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
     // Pan to move
     const
         offset = useRef({ x: new Animated.Value(0), y: new Animated.Value(0) }).current,
-        lastOffset = useRef({ x: 0, y: 0 });
+        lastOffset = useRef({ x: 0, y: 0 }),
+        transformedOffset = useRef({ x: new Animated.Value(0), y: new Animated.Value(0) }).current;
 
     // Pinch to zoom
     const
@@ -28,8 +30,8 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
         pinchScale = useRef(new Animated.Value(1)).current,
         lastScale = useRef(1),    
         transformedScale = Animated.multiply(baseScale, pinchScale).interpolate({
-            inputRange: [ .75, 3 ],
-            outputRange: [ .75, 3 ],
+            inputRange: [ .75, 3.8 ],
+            outputRange: [ .75, 3.8 ],
             extrapolate: "clamp"
         });
 
@@ -41,25 +43,25 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
             scale: pinchScale
         } }
     ], {
-        useNativeDriver: true,
-        listener: (e) => {
-            if (e.nativeEvent.scale === 1) {
-                setAllowScrolling(true);
-            } else if (!isZoomed) {
-                setAllowScrolling(false);
-            }
-        }
+        useNativeDriver: true
     });
 
-    function pinchGestureStateChange (e) {
-
-        const event = e.nativeEvent;
-
-        if (event.oldState === State.ACTIVE) {
+    function pinchGestureStateChange ({ nativeEvent: event }) {
+        if (event.oldState === State.ACTIVE) {       
+            
+            function setScaleTo (scale) {
+                Animated.timing(baseScale, {
+                    toValue: scale,
+                    duration: 200,
+                    easing: Easing.out(Easing.back(1)),
+                    useNativeDriver: true
+                }).start(() => {
+                    lastScale.current = scale;
+                    baseScale.setValue(scale);
+                });
+            }
 
             let absoluteScale = lastScale.current * event.scale
-
-            if (absoluteScale > 3.5) absoluteScale = 3.5;
 
             // Save zoom scale
             lastScale.current = absoluteScale;
@@ -68,18 +70,10 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
 
             // Bounce image back to scale 1 if too small
             if (absoluteScale < 1) {
-
-                absoluteScale = 1;
-
-                Animated.timing(baseScale, {
-                    toValue: absoluteScale,
-                    duration: 200,
-                    easing: Easing.out(Easing.back(1)),
-                    useNativeDriver: true
-                }).start(() => {
-                    lastScale.current = 1;
-                    baseScale.setValue(1);
-                });
+                setScaleTo(1);
+                movePageAndSaveState(0, 0, true);       
+            } else if (absoluteScale > 3.5) {
+                setScaleTo(3.5);
             }
             
             // Toggle page swiping
@@ -100,35 +94,61 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
             translationY: offset.y
         } }
     ], {
-        useNativeDriver: true
+        useNativeDriver: true, 
+        listener: ({ nativeEvent: { translationX, translationY } }) => {
+            if (isZoomed.current) {
+                movePageTo(lastOffset.current.x + translationX, lastOffset.current.y + translationY);
+            }
+        }
     });
 
-    function offsetPage (x, y) {
+    function movePageTo (x, y, animate) {
 
-        // X
-        lastOffset.current.x += x;
-        offset.x.setOffset(lastOffset.current.x);
-        offset.x.setValue(0);
+        function animatePage (coordinateRef, coordinateValue, callback) {
+            Animated.timing(coordinateRef, {
+                toValue: coordinateValue,
+                duration: 250,
+                easing: Easing.out(Easing.back(1)),
+                useNativeDriver: true
+            }).start(callback);
+        }
 
-        // Y
-        lastOffset.current.y += y;
-        offset.y.setOffset(lastOffset.current.y);
-        offset.y.setValue(0);
-
-    }
-
-    function panGestureStateChange (e) {
-
-        const event = e.nativeEvent;
-
-        if (event.oldState === State.ACTIVE) {
-            offsetPage(event.translationX, event.translationY)
+        if (animate) {
+            animatePage(transformedOffset.x, x, () => lastOffset.current.x = x);
+            animatePage(transformedOffset.y, y, () => lastOffset.current.y = y);
+        } else {
+            transformedOffset.x.setValue(x);
+            transformedOffset.y.setValue(y);
         }
 
     }
 
-    function doubleTapGestureStateChange (event) {
-        if (event.nativeEvent.state === State.END) {
+    function movePageAndSaveState (x, y, animate) {
+
+        // X
+        lastOffset.current.x = x;
+        offset.x.setOffset(lastOffset.current.x);
+        offset.x.setValue(0);
+
+        // Y
+        lastOffset.current.y = y;
+        offset.y.setOffset(lastOffset.current.y);
+        offset.y.setValue(0);
+
+        // Apply changes
+        movePageTo(lastOffset.current.x, lastOffset.current.y, animate);
+
+    }
+
+    function panGestureStateChange ({ nativeEvent: { translationX, translationY, oldState } }) {
+        if (oldState === State.ACTIVE && isZoomed.current) {
+            movePageAndSaveState(lastOffset.current.x + translationX, lastOffset.current.y + translationY);
+        }
+
+    }
+
+    function doubleTapGestureStateChange ({ nativeEvent: event }) {
+        if (event.state === State.END) {
             
             isZoomed.current = !isZoomed.current;
 
@@ -170,8 +190,8 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
                                 >
                                     <Animated.Image
                                         style = {[ styles.pageImage, { transform: [
-                                            { translateX: offset.x },
-                                            { translateY: offset.y }
+                                            { translateX: transformedOffset.x },
+                                            { translateY: transformedOffset.y }
                                         ] } ]}
                                         source = {{ uri: page }}
                                         resizeMode = "contain"
