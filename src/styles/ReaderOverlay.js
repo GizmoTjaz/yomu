@@ -10,6 +10,7 @@ export default StyleSheet.create({
         width: "100%",
         height: "100%",
         top: 40,
+        zIndex: 3
     },
     subContainer: {
         width: "100%",
@@ -17,7 +18,7 @@ export default StyleSheet.create({
         justifyContent: "space-between"
     },
     floatingContainer: {
-        zIndex: 2
+        
     },
     topContainer: {
         flexDirection: "row",

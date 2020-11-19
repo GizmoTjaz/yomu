@@ -33,12 +33,18 @@ export default function ReaderOverlay ({ chapter, pageIndex, setSettingsVisibili
     }
 
     return (
-        <View style = { styles.container }>
+        <View
+            style = { styles.container }
+            pointerEvents = "box-none"
+        >
             <TapGestureHandler
                 numberOfTaps = { 1 }
                 onHandlerStateChange = { tapGestureEvent }
             >
-                <Animated.View style = {[ styles.subContainer, { opacity: overlayOpacityValue }]}>
+                <Animated.View
+                    style = {[ styles.subContainer, { opacity: overlayOpacityValue }]}
+                    pointerEvents = "box-none"
+                >
                     <View style = {[ styles.floatingContainer, styles.topContainer ]}>
                         <RoundIconButton
                             icon = "ios-cog"
