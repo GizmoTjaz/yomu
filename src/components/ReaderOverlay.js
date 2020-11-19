@@ -11,7 +11,7 @@ import RoundIconButton from "./RoundIconButton";
 // Styles
 import styles from "../styles/ReaderOverlay";
 
-export default function ReaderOverlay ({ chapter, pageIndex, setSettingsVisibility, closeOverlay }) {
+export default function ReaderOverlay ({ chapter, pageIndex, readingDirection, setSettingsVisibility, closeOverlay }) {
 
     const
         overlayOpacityValue = useRef(new Animated.Value(1)).current,
@@ -30,6 +30,10 @@ export default function ReaderOverlay ({ chapter, pageIndex, setSettingsVisibili
             }).start();
 
         }
+    }
+
+    function calculatePagePosition () {
+        return Math.max(1, pageIndex + 1);
     }
 
     return (
@@ -71,7 +75,7 @@ export default function ReaderOverlay ({ chapter, pageIndex, setSettingsVisibili
                     <View style = {[ styles.floatingContainer, styles.bottomContainer ]}>
                         <View style = {[ styles.hoverBox, styles.pageCounterContainer ]}>
                             <Text style = { styles.pageCounterLabel }>
-                                { `${Math.max(1, pageIndex + 1)} / ${ chapter.pages.length }` }
+                                { `${calculatePagePosition()} / ${ chapter.pages.length }` }
                             </Text>
                         </View>
                     </View>

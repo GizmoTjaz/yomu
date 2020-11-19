@@ -13,7 +13,7 @@ import styles from "../styles/ReaderPage";
 // Variables
 import { COLORS } from "../utils/constants";
 
-export default function ReaderPage ({ page, setAllowScrolling }) {
+export default function ReaderPage ({ page, setAllowScrolling, readingDirection }) {
 
     const
         isZoomed = useRef(false);
@@ -199,7 +199,7 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
                                         ]}
                                     >
                                         <Image
-                                            style = {[ styles.pageImage ]}
+                                            style = {[ styles.pageImage, { transform: [{ scaleX: readingDirection === "rtl" ? -1 : 1 }] } ]}
                                             source = {{ uri: page }}
                                             resizeMode = "contain"
                                         />

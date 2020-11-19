@@ -57,13 +57,15 @@ function Reader ({ data: { manga, chapterIndex }, onClose, changeReaderSetting, 
                             <ReaderOverlay
                                 chapter = { chapter }
                                 pageIndex = { pageIndex }
+                                readingDirection = { readerSettings.readingDirection }
                                 setSettingsVisibility = { setSettingsVisibility }
                                 closeOverlay = { onClose }
                             />
                             <ReaderPageCarousel
                                 pages = { chapter.pages }
-                                onPageChange = { index => setPageIndex(index) }
+                                pageIndex = { pageIndex }
                                 readingDirection = { readerSettings.readingDirection }
+                                setPageIndex = { setPageIndex }
                             />
                             <ReaderSettings
                                 visible = { settingsVisibility }
