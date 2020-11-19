@@ -8,7 +8,8 @@ export default StyleSheet.create({
     mangaListContainer: {
         marginLeft: 24,
         marginRight: 24,
-        marginTop: 12
+        marginTop: 12,
+        height: "100%"
     },
     mangaContainer: {
         width: 97,
