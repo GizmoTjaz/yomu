@@ -20,9 +20,9 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
 
     // Pan to move
     const
-        offset = useRef({ x: new Animated.Value(0), y: new Animated.Value(0) }).current,
-        lastOffset = useRef({ x: 0, y: 0 }),
-        transformedOffset = useRef({ x: new Animated.Value(0), y: new Animated.Value(0) }).current;
+        position = useRef({ x: new Animated.Value(0), y: new Animated.Value(0) }).current,
+        lastPosition = useRef({ x: 0, y: 0 }),
+        transformedPosition = useRef({ x: new Animated.Value(0), y: new Animated.Value(0) }).current;
 
     // Pinch to zoom
     const
@@ -46,21 +46,21 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
         useNativeDriver: true
     });
 
+    function setScaleTo (scale) {
+        Animated.timing(baseScale, {
+            toValue: scale,
+            duration: 200,
+            easing: Easing.out(Easing.back(1)),
+            useNativeDriver: true
+        }).start(() => {
+            lastScale.current = scale;
+            baseScale.setValue(scale);
+        });
+    }
+
     function pinchGestureStateChange ({ nativeEvent: event }) {
         if (event.oldState === State.ACTIVE) {       
             
-            function setScaleTo (scale) {
-                Animated.timing(baseScale, {
-                    toValue: scale,
-                    duration: 200,
-                    easing: Easing.out(Easing.back(1)),
-                    useNativeDriver: true
-                }).start(() => {
-                    lastScale.current = scale;
-                    baseScale.setValue(scale);
-                });
-            }
-
             let absoluteScale = lastScale.current * event.scale
 
             // Save zoom scale
@@ -90,14 +90,14 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
 
     const panGestureEvent = Animated.event([
         { nativeEvent: {
-            translationX: offset.x,
-            translationY: offset.y
+            translationX: position.x,
+            translationY: position.y
         } }
     ], {
         useNativeDriver: true, 
-        listener: ({ nativeEvent: { translationX, translationY } }) => {
+        listener: ({ nativeEvent: { translationX, translationY, velocityX } }) => {
             if (isZoomed.current) {
-                movePageTo(lastOffset.current.x + translationX, lastOffset.current.y + translationY);
+                movePageTo(lastPosition.current.x + translationX, lastPosition.current.y + translationY);
             }
         }
     });
@@ -114,11 +114,11 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
         }
 
         if (animate) {
-            animatePage(transformedOffset.x, x, () => lastOffset.current.x = x);
-            animatePage(transformedOffset.y, y, () => lastOffset.current.y = y);
+            animatePage(transformedPosition.x, x, () => lastPosition.current.x = x);
+            animatePage(transformedPosition.y, y, () => lastPosition.current.y = y);
         } else {
-            transformedOffset.x.setValue(x);
-            transformedOffset.y.setValue(y);
+            transformedPosition.x.setValue(x);
+            transformedPosition.y.setValue(y);
         }
 
     }
@@ -126,23 +126,23 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
     function movePageAndSaveState (x, y, animate) {
 
         // X
-        lastOffset.current.x = x;
-        offset.x.setOffset(lastOffset.current.x);
-        offset.x.setValue(0);
+        lastPosition.current.x = x;
+        position.x.setOffset(lastPosition.current.x);
+        position.x.setValue(0);
 
         // Y
-        lastOffset.current.y = y;
-        offset.y.setOffset(lastOffset.current.y);
-        offset.y.setValue(0);
+        lastPosition.current.y = y;
+        position.y.setOffset(lastPosition.current.y);
+        position.y.setValue(0);
 
         // Apply changes
-        movePageTo(lastOffset.current.x, lastOffset.current.y, animate);
+        movePageTo(lastPosition.current.x, lastPosition.current.y, animate);
 
     }
 
     function panGestureStateChange ({ nativeEvent: { translationX, translationY, oldState } }) {
         if (oldState === State.ACTIVE && isZoomed.current) {
-            movePageAndSaveState(lastOffset.current.x + translationX, lastOffset.current.y + translationY);
+            movePageAndSaveState(lastPosition.current.x + translationX, lastPosition.current.y + translationY);
         }
 
     }
@@ -152,12 +152,14 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
             
             isZoomed.current = !isZoomed.current;
 
-            Animated.timing(pinchScale, {
-                toValue: isZoomed.current ? 2 : 1,
-                duration: 100,
-                easing: Easing.inOut(Easing.ease),
-                useNativeDriver: true
-            }).start();
+            if (isZoomed.current) {
+                setScaleTo(2);
+            } else {
+                setScaleTo(1);
+                movePageAndSaveState(0, 0, true);
+            }
+
+            
         }
     }
 
@@ -183,16 +185,15 @@ export default function ReaderPage ({ page, setAllowScrolling }) {
                         >
                             <Animated.View style = { styles.pageContainer }>
                                 <PanGestureHandler
-                                    minPointers = { 1 }
-                                    maxPointers = { 1 }
+                                    minPointers = { 2 }
                                     onGestureEvent = { panGestureEvent }
                                     onHandlerStateChange = { panGestureStateChange }
                                 >
                                     <Animated.View
                                         style = {[
                                             { transform: [
-                                                { translateX: transformedOffset.x },
-                                                { translateY: transformedOffset.y }
+                                                { translateX: transformedPosition.x },
+                                                { translateY: transformedPosition.y }
                                             ] },
                                             styles.pageImage
                                         ]}
