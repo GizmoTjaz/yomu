@@ -42,7 +42,7 @@ export default function ReaderPageCarousel ({ pages, pageIndex, readingDirection
     }
 
     useEffect(() => {
-        scrollToPageIndex(pageIndex)
+        scrollToPageIndex(pageIndex);
     }, [ readingDirection ]);
 
     return (

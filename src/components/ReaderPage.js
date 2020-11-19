@@ -95,7 +95,7 @@ export default function ReaderPage ({ page, setAllowScrolling, readingDirection 
         } }
     ], {
         useNativeDriver: true, 
-        listener: ({ nativeEvent: { translationX, translationY, velocityX } }) => {
+        listener: ({ nativeEvent: { translationX, translationY } }) => {
             if (isZoomed.current) {
                 movePageTo(lastPosition.current.x + translationX, lastPosition.current.y + translationY);
             }
@@ -154,9 +154,11 @@ export default function ReaderPage ({ page, setAllowScrolling, readingDirection 
 
             if (isZoomed.current) {
                 setScaleTo(2);
+                setAllowScrolling(false);
             } else {
                 setScaleTo(1);
                 movePageAndSaveState(0, 0, true);
+                setAllowScrolling(true);
             }
 
             
@@ -171,7 +173,7 @@ export default function ReaderPage ({ page, setAllowScrolling, readingDirection 
                 <TapGestureHandler
                     ref = { doubleTapRef }
                     numberOfTaps = { 2 }
-                    maxDist = { 5 }
+                    maxDist = { 25 }
                     onHandlerStateChange = { doubleTapGestureStateChange }
                 >
                     <Animated.View
